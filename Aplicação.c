@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 typedef struct{
     char codigo[6];
@@ -36,7 +35,10 @@ typedef struct{
     Data data;
 }Clientes;
 
+
 int main(){
+    int i=0;
+    Vendas vendas[100];
     FILE *FileClientes;
     FILE *FileProdutos;
     FILE *FileVendas;
@@ -50,10 +52,20 @@ int main(){
     }
     FileVendas = fopen("vendas.txt", "r");
     if (FileVendas == NULL) {
-        return 1;
+        printf("Erro ao abrir arquivo vendas\n");
+    }
+    while(fscanf(FileVendas,"%s",vendas[i].cpf) != EOF) {
+        fscanf(FileVendas,"%s",vendas[i].codigo);
+        fscanf(FileVendas,"%d",&vendas[i].quantidade_comprada);
+
+        printf("%s\n",vendas[i].cpf);
+        printf("%s\n",vendas[i].codigo);
+        printf("%d\n",vendas[i].quantidade_comprada);
+        i++;
     }
 
     fclose(FileClientes);
     fclose(FileProdutos);
     fclose(FileVendas);
+    return 0;
 }
