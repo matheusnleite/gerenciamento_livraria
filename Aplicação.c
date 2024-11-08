@@ -5,7 +5,7 @@ typedef struct{
     char nome[50];
     char autor[20];
     int quantidade_em_estoque;
-    float preço;
+    float preco;
 }Produtos;
 
 typedef struct{
@@ -35,30 +35,30 @@ typedef struct{
     Data data;
 }Clientes;
 
-Vendas* Atribuir_ao_Vetor() {
+void Atribuir_ao_Vetor_Clientes(Vendas *p_vendas) {
     int i=0;
     FILE *FileVendas;
-    Vendas vendas[100];
-    Vendas *p_vendas = &vendas;
     FileVendas = fopen("vendas.txt", "r");
     if (FileVendas == NULL) {
         printf("Erro ao abrir arquivo vendas\n");
     }
-    while(fscanf(FileVendas,"%s",vendas[i].cpf) != EOF) {
-        fscanf(FileVendas,"%s",vendas[i].codigo);
-        fscanf(FileVendas,"%d",&vendas[i].quantidade_comprada);
+    while(fscanf(FileVendas,"%s",(p_vendas+i)->cpf) != EOF) {
+        fscanf(FileVendas,"%s",(p_vendas+i)->codigo);
+        fscanf(FileVendas,"%d",&(p_vendas+i)->quantidade_comprada);
 
-        printf("%s\n",vendas[i].cpf);
-        printf("%s\n",vendas[i].codigo);
-        printf("%d\n",vendas[i].quantidade_comprada);
+        printf("%s\n",(p_vendas+i)->cpf);
+        printf("%s\n",(p_vendas+i)->codigo);
+        printf("%d\n",(p_vendas+i)->quantidade_comprada);
+        i++;
     }
     fclose(FileVendas);
-    return p_vendas;
 }
 
 int main(){
     int i=0;
+    Vendas vendas[100];
     Vendas *p_vendas;
+    p_vendas = &vendas;
     FILE *FileClientes;
     FILE *FileProdutos;
 
@@ -70,11 +70,12 @@ int main(){
     if (FileProdutos == NULL) {
         return 1;
     }
-    p_vendas = Atribuir_ao_Vetor();
-    printf("%s\n", (p_vendas+i)->cpf);
-    printf("%s\n", (p_vendas+i)->codigo);
-    printf("%d\n", (p_vendas+i)->quantidade_comprada);
-
+    Atribuir_ao_Vetor_Clientes(p_vendas);
+    for(i=0;i<2;i++) {
+        printf("%s\n", (p_vendas+i)->cpf);
+        printf("%s\n", (p_vendas+i)->codigo);
+        printf("%d\n", (p_vendas+i)->quantidade_comprada);
+    }
     fclose(FileClientes);
     fclose(FileProdutos);
 
