@@ -4,8 +4,8 @@ typedef struct{
     char codigo[6];
     char nome[50];
     char autor[20];
-    int quantidade_em_estoque;
     float preco;
+    int quantidade_em_estoque;
 }Produtos;
 
 typedef struct{
@@ -35,7 +35,7 @@ typedef struct{
     Data data;
 }Clientes;
 
-void Atribuir_ao_Vetor_Clientes(Vendas *p_vendas) {
+void Atribuir_ao_Vetor_Vendas(Vendas *p_vendas) {
     int i=0;
     FILE *FileVendas;
     FileVendas = fopen("vendas.txt", "r");
@@ -46,12 +46,66 @@ void Atribuir_ao_Vetor_Clientes(Vendas *p_vendas) {
         fscanf(FileVendas,"%s",(p_vendas+i)->codigo);
         fscanf(FileVendas,"%d",&(p_vendas+i)->quantidade_comprada);
 
-        printf("%s\n",(p_vendas+i)->cpf);
-        printf("%s\n",(p_vendas+i)->codigo);
-        printf("%d\n",(p_vendas+i)->quantidade_comprada);
+        //printf("%s\n",(p_vendas+i)->cpf);
+        //printf("%s\n",(p_vendas+i)->codigo);
+        //printf("%d\n",(p_vendas+i)->quantidade_comprada);
         i++;
     }
     fclose(FileVendas);
+}
+
+void Atribuir_ao_Vetor_Clientes(Clientes *p_clientes) {
+    int i=0;
+    FILE *FileClientes;
+    FileClientes = fopen("clientes.txt", "r");
+    if (FileClientes == NULL) {
+        printf("Erro ao abrir arquivo clientes\n");
+    }
+    while(fscanf(FileClientes,"%s",(p_clientes+i)->cpf) != EOF) {
+        fscanf(FileClientes,"%s",(p_clientes+i)->nome);
+        fscanf(FileClientes,"%s",(p_clientes+i)->telefone);
+        fscanf(FileClientes,"%s",(p_clientes)->endereco.rua);
+        fscanf(FileClientes,"%s",(p_clientes)->endereco.numero);
+        fscanf(FileClientes,"%s",(p_clientes)->endereco.cidade);
+        fscanf(FileClientes,"%s",(p_clientes)->endereco.estado);
+        fscanf(FileClientes,"%s",(p_clientes)->data.dia);
+        fscanf(FileClientes,"%s",(p_clientes)->data.mes);
+        fscanf(FileClientes,"%s",(p_clientes)->data.ano);
+
+
+        //printf("%s\n",(p_clientes+i)->cpf);
+        //printf("%s\n",(p_clientes+i)->nome);
+        //printf("%s\n",(p_clientes+i)->telefone);
+        //printf("%s\n",(p_clientes+i)->endereco.rua);
+        //printf("%s\n",(p_clientes+i)->endereco.numero);
+        //printf("%s\n",(p_clientes+i)->endereco.cidade);
+        //printf("%s\n",(p_clientes+i)->endereco.estado);
+        i++;
+    }
+    fclose(FileClientes);
+}
+
+void Atribuir_ao_Vetor_Produtos(Produtos *p_produtos) {
+    int i=0;
+    FILE *FileProdutos;
+    FileProdutos = fopen("produtos.txt", "r");
+    if (FileProdutos == NULL) {
+        printf("Erro ao abrir arquivo produtos\n");
+    }
+    while(fscanf(FileProdutos,"%s",(p_produtos+i)->codigo) != EOF) {
+        fscanf(FileProdutos,"%s",(p_produtos+i)->nome);
+        fscanf(FileProdutos,"%s",(p_produtos+i)->autor);
+        fscanf(FileProdutos,"%f",&(p_produtos+i)->preco);
+        fscanf(FileProdutos,"%d",&(p_produtos+i)->quantidade_em_estoque);
+
+        //printf("%s\n",(p_produtos+i)->codigo);
+        //printf("%s\n",(p_produtos+i)->nome);
+        //printf("%s\n",(p_produtos+i)->autor);
+        //printf("%f\n",(p_produtos+i)->preco);
+        //printf("%d\n",(p_produtos+i)->quantidade_em_estoque);
+        i++;
+    }
+    fclose(FileProdutos);
 }
 
 int main(){
@@ -59,25 +113,44 @@ int main(){
     Vendas vendas[100];
     Vendas *p_vendas;
     p_vendas = &vendas;
-    FILE *FileClientes;
-    FILE *FileProdutos;
 
-    FileClientes = fopen("clientes.txt", "r");
-    if (FileClientes == NULL) {
-        return 1;
+    Clientes clientes[100];
+    Clientes *p_clientes;
+    p_clientes = &clientes;
+
+    Produtos produtos[100];
+    Produtos *p_produtos;
+    p_produtos = &produtos;
+
+
+
+    Atribuir_ao_Vetor_Vendas(p_vendas);
+    for(i=0;i<1;i++) {
+        printf("Cpf:%s\n", (p_vendas+i)->cpf);
+        printf("Codigo:%s\n", (p_vendas+i)->codigo);
+        printf("Quantidade Comprada:%d\n\n", (p_vendas+i)->quantidade_comprada);
     }
-    FileProdutos = fopen("produtos.txt", "r");
-    if (FileProdutos == NULL) {
-        return 1;
+    Atribuir_ao_Vetor_Clientes(p_clientes);
+    for(i=0;i<1;i++) {
+        printf("Cpf:%s\n", (p_clientes+i)->cpf);
+        printf("Nome do Cliente:%s\n", (p_clientes+i)->nome);
+        printf("Telefone do CLiente:%s\n", (p_clientes+i)->telefone);
+        printf("Rua:%s\n", (p_clientes+i)->endereco.rua);
+        printf("Numero:%s\n", (p_clientes+i)->endereco.numero);
+        printf("Cidade:%s\n", (p_clientes+i)->endereco.cidade);
+        printf("Estado:%s\n", (p_clientes+i)->endereco.estado);
+        printf("Dia:%s\n", (p_clientes+i)->data.dia);
+        printf("Mes:%s\n", (p_clientes+i)->data.mes);
+        printf("Ano:%s\n\n", (p_clientes+i)->data.ano);
     }
-    Atribuir_ao_Vetor_Clientes(p_vendas);
-    for(i=0;i<2;i++) {
-        printf("%s\n", (p_vendas+i)->cpf);
-        printf("%s\n", (p_vendas+i)->codigo);
-        printf("%d\n", (p_vendas+i)->quantidade_comprada);
+    Atribuir_ao_Vetor_Produtos(p_produtos);
+    for(i=0;i<1;i++) {
+        printf("Codigo:%s\n",(p_produtos+i)->codigo);
+        printf("Nome do Livro:%s\n",(p_produtos+i)->nome);
+        printf("Autor do Livro:%s\n",(p_produtos+i)->autor);
+        printf("R$:%.2f\n",(p_produtos+i)->preco);
+        printf("Quantidade em Estoque:%d\n\n",(p_produtos+i)->quantidade_em_estoque);
     }
-    fclose(FileClientes);
-    fclose(FileProdutos);
 
     return 0;
 }
