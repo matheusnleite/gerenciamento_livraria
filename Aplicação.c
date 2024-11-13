@@ -124,7 +124,8 @@ void ListarVendas(Vendas *p_vendas, int quantidade){
         printf("1. Adicionar venda\n");
         printf("2. Alterar venda\n");
         printf("3. Consultar vendas\n");
-        printf("4. Sair\n");
+        printf("4. Deletar venda\n");
+        printf("5. Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &escolha);
 
@@ -150,35 +151,120 @@ void ListarVendas(Vendas *p_vendas, int quantidade){
             }
             break;
         case 4:
+            printf("Ainda estamos implementando essa funcao!\n");
+            sleep(1);
+            system("cls");
+            break;
+        case 5:
             printf("Saindo...\n");
             sleep(1);
             system("cls");
             break;
         }
-    }while(escolha != 4);
+    }while(escolha != 5);
 
 }
 
 // Função para listar clientes carregados 
 void ListarClientes(Clientes *p_clientes, int quantidade){
-    printf("===Lista de Clientes====\n");
-    for(int i = 0; i < quantidade;i++){
-        printf("Cpf: %s\n", (p_clientes + i)->cpf);
-        printf("Nome do Cliente: %s\n", (p_clientes + i)->nome);
-        printf("Telefone: %s\n", (p_clientes + i)->telefone);
-        printf("Cidade: %s\n\n", (p_clientes + i)->endereco.cidade);
-    }
+    int escolha;
+    do{
+        //menu dentro da funcao Clientes
+        printf("\n=== Menu de Clientes ===\n");
+        printf("1. Adicionar cliente\n");
+        printf("2. Alterar cliente\n");
+        printf("3. Consultar clientes\n");
+        printf("4. Deletar cliente\n");
+        printf("5. Sair\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &escolha);
+
+        switch (escolha)
+        {
+        case 1:
+            printf("Ainda estamos implementando essa funcao!\n");
+            sleep(1);
+            system("cls");
+            break;
+        case 2:
+            printf("Ainda estamos implementando essa funcao!\n");
+            sleep(1);
+            system("cls");
+            break;
+        case 3:
+            system("cls");
+            printf("===Lista de Clientes====\n");
+            for(int i = 0; i < quantidade;i++){
+                printf("Cpf: %s\n", (p_clientes + i)->cpf);
+                printf("Nome do Cliente: %s\n", (p_clientes + i)->nome);
+                printf("Telefone: %s\n", (p_clientes + i)->telefone);
+                printf("Cidade: %s\n\n", (p_clientes + i)->endereco.cidade);
+            }
+            break;
+        case 4:
+            printf("Ainda estamos implementando essa funcao!\n");
+            sleep(1);
+            system("cls");
+            break;
+        case 5:
+            printf("Saindo...\n");
+            sleep(1);
+            system("cls");
+            break;
+        }
+    }while(escolha != 5);
+
 }
 
 //// Função para liosstar produtos carregad
 void ListarProdutos(Produtos *p_produtos, int quantidade) {
-    printf("=== Lista de Produtos ===\n");
-    for (int i = 0; i < quantidade; i++) {
-        printf("Codigo: %s\n", (p_produtos + i)->codigo);
-        printf("Nome: %s\n", (p_produtos + i)->nome);
-        printf("Preco: %.2f\n", (p_produtos + i)->preco);
-        printf("Quantidade em Estoque: %d\n\n", (p_produtos + i)->quantidade_em_estoque);
-    }
+    int escolha;
+    do{
+        //menu dentro da funcao Clientes
+        printf("\n=== Menu de Produtos ===\n");
+        printf("1. Adicionar produto\n");
+        printf("2. Alterar produto\n");
+        printf("3. Consultar produtos\n");
+        printf("4. Deletar produto\n");
+        printf("5. Sair\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &escolha);
+
+        switch (escolha)
+        {
+        case 1:
+            printf("Ainda estamos implementando essa funcao!\n");
+            sleep(1);
+            system("cls");
+            break;
+        case 2:
+            printf("Ainda estamos implementando essa funcao!\n");
+            sleep(1);
+            system("cls");
+            break;
+        case 3:
+            system("cls");
+            printf("=== Lista de Produtos ===\n");
+            for (int i = 0; i < quantidade; i++) {
+                printf("Codigo: %s\n", (p_produtos + i)->codigo);
+                printf("Nome: %s\n", (p_produtos + i)->nome);
+                printf("Preco: %.2f\n", (p_produtos + i)->preco);
+                printf("Quantidade em Estoque: %d\n\n", (p_produtos + i)->quantidade_em_estoque);
+            }
+            break;
+        case 4:
+            printf("Ainda estamos implementando essa funcao!\n");
+            sleep(1);
+            system("cls");
+            break;
+        case 5:
+            printf("Saindo...\n");
+            sleep(1);
+            system("cls");
+            break;
+        }
+    }while(escolha != 5);
+
 
 }
 
