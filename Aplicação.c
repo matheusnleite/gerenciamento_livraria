@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 typedef struct{
     char codigo[6];
@@ -115,12 +117,42 @@ void Atribuir_ao_Vetor_Produtos(Produtos *p_produtos) {
 
 //Funcao para listar as vendas carregadas
 void ListarVendas(Vendas *p_vendas, int quantidade){
-    printf("===Lista de vendas====\n");
-    for(int i = 0; i <quantidade;i++){
-        printf("Cpf: %s\n", (p_vendas+i)->cpf);
-        printf("Codigo: %s\n", (p_vendas+i)->codigo);
-        printf("Quantidade comprada: %d\n\n", (p_vendas+i)->quantidade_comprada);
-    }
+    int escolha;
+    do{
+        //menu dentro da funcao vendas
+        printf("\n=== Menu de Vendas ===\n");
+        printf("1. Adicionar venda\n");
+        printf("2. Alterar venda\n");
+        printf("3. Consultar vendas\n");
+        printf("4. Sair\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &escolha);
+
+        switch (escolha)
+        {
+        case 1:
+            printf("Ainda estamos implementando essa funcao!\n");
+            break;
+        case 2:
+            printf("Ainda estamos implementando essa funcao!\n");
+            break;
+        case 3:
+            system("cls");
+            printf("===Lista de vendas====\n");
+            for(int i = 0; i <quantidade;i++){
+                printf("Cpf: %s\n", (p_vendas+i)->cpf);
+                printf("Codigo: %s\n", (p_vendas+i)->codigo);
+                printf("Quantidade comprada: %d\n\n", (p_vendas+i)->quantidade_comprada);
+            }
+            break;
+        case 4:
+            printf("Saindo...\n");
+            sleep(1);
+            system("cls");
+            break;
+        }
+    }while(escolha != 4);
+
 }
 
 // Função para listar clientes carregados 
@@ -143,10 +175,16 @@ void ListarProdutos(Produtos *p_produtos, int quantidade) {
         printf("Preco: %.2f\n", (p_produtos + i)->preco);
         printf("Quantidade em Estoque: %d\n\n", (p_produtos + i)->quantidade_em_estoque);
     }
+
 }
 
 int main(){
     int i=0;
+    int qtdclientes,qtdvendas,variedade_produtos; //variaveis para saber a quantidade de cada uma das informacoes nos vetores
+    qtdclientes=1;
+    qtdvendas=3;
+    variedade_produtos=1;
+
     int escolha;
     Vendas vendas[100];
     Clientes clientes[100];
@@ -160,7 +198,7 @@ int main(){
     //!!!!!!!!!!!!FIZ funcoes para ficar diminuir a quantidade codigo da main
     do{
         //Fiz um pequeno menu principal, ADICIONAR AS POSTERIORES FUNCOES PARA ADICIONAR COISAS
-        printf("=== Menu Principal ===\n");
+        printf("\n=== Menu Principal ===\n");
         printf("1. Listar Vendas\n");
         printf("2. Listar Clientes\n");
         printf("3. Listar Produtos\n");
@@ -171,13 +209,16 @@ int main(){
         switch (escolha)
         {
         case 1:
-            ListarVendas(vendas, 100);
+            system("cls");
+            ListarVendas(vendas, qtdvendas);
             break;
         case 2:
-            ListarClientes(clientes, 100);
+            system("cls");
+            ListarClientes(clientes, qtdclientes);
             break;
         case 3:
-            ListarProdutos(produtos, 100);
+            system("cls");
+            ListarProdutos(produtos, variedade_produtos);
             break;
         case 4:
             printf("Saindo...\n");
