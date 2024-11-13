@@ -132,9 +132,13 @@ void ListarVendas(Vendas *p_vendas, int quantidade){
         {
         case 1:
             printf("Ainda estamos implementando essa funcao!\n");
+            sleep(1);
+            system("cls");
             break;
         case 2:
             printf("Ainda estamos implementando essa funcao!\n");
+            sleep(1);
+            system("cls");
             break;
         case 3:
             system("cls");
