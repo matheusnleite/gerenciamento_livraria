@@ -49,10 +49,6 @@ void Atribuir_ao_Vetor_Vendas(Vendas *p_vendas) {
     while(fscanf(FileVendas,"%s",(p_vendas+i)->cpf) != EOF) {
         fscanf(FileVendas,"%s",(p_vendas+i)->codigo);
         fscanf(FileVendas,"%d",&(p_vendas+i)->quantidade_comprada);
-
-        //printf("%s\n",(p_vendas+i)->cpf);
-        //printf("%s\n",(p_vendas+i)->codigo);
-        //printf("%d\n",(p_vendas+i)->quantidade_comprada);
         i++;
     }
     fclose(FileVendas);
@@ -76,15 +72,6 @@ void Atribuir_ao_Vetor_Clientes(Clientes *p_clientes) {
         fscanf(FileClientes,"%s",(p_clientes)->data.dia);
         fscanf(FileClientes,"%s",(p_clientes)->data.mes);
         fscanf(FileClientes,"%s",(p_clientes)->data.ano);
-
-
-        //printf("%s\n",(p_clientes+i)->cpf);
-        //printf("%s\n",(p_clientes+i)->nome);
-        //printf("%s\n",(p_clientes+i)->telefone);
-        //printf("%s\n",(p_clientes+i)->endereco.rua);
-        //printf("%s\n",(p_clientes+i)->endereco.numero);
-        //printf("%s\n",(p_clientes+i)->endereco.cidade);
-        //printf("%s\n",(p_clientes+i)->endereco.estado);
         i++;
     }
     fclose(FileClientes);
@@ -104,12 +91,6 @@ void Atribuir_ao_Vetor_Produtos(Produtos *p_produtos) {
         fscanf(FileProdutos,"%s",(p_produtos+i)->autor);
         fscanf(FileProdutos,"%f",&(p_produtos+i)->preco);
         fscanf(FileProdutos,"%d",&(p_produtos+i)->quantidade_em_estoque);
-
-        //printf("%s\n",(p_produtos+i)->codigo);
-        //printf("%s\n",(p_produtos+i)->nome);
-        //printf("%s\n",(p_produtos+i)->autor);
-        //printf("%f\n",(p_produtos+i)->preco);
-        //printf("%d\n",(p_produtos+i)->quantidade_em_estoque);
         i++;
     }
     fclose(FileProdutos);
@@ -132,9 +113,8 @@ void ListarVendas(Vendas *p_vendas, int quantidade){
         switch (escolha)
         {
         case 1:
-            printf("Ainda estamos implementando essa funcao!\n");
-            sleep(1);
             system("cls");
+            Adicionar_Vendas(quantidade);
             break;
         case 2:
             printf("Ainda estamos implementando essa funcao!\n");
@@ -182,9 +162,8 @@ void ListarClientes(Clientes *p_clientes, int quantidade){
         switch (escolha)
         {
         case 1:
-            printf("Ainda estamos implementando essa funcao!\n");
-            sleep(1);
             system("cls");
+            Adicionar_Clientes(quantidade);
             break;
         case 2:
             printf("Ainda estamos implementando essa funcao!\n");
@@ -216,7 +195,7 @@ void ListarClientes(Clientes *p_clientes, int quantidade){
 
 }
 
-//// Função para liosstar produtos carregad
+//// Função para listar produtos carregados
 void ListarProdutos(Produtos *p_produtos, int quantidade) {
     int escolha;
     do{
@@ -233,9 +212,8 @@ void ListarProdutos(Produtos *p_produtos, int quantidade) {
         switch (escolha)
         {
         case 1:
-            printf("Ainda estamos implementando essa funcao!\n");
-            sleep(1);
             system("cls");
+            Adicionar_Produto(quantidade, p_produtos);
             break;
         case 2:
             printf("Ainda estamos implementando essa funcao!\n");
@@ -268,12 +246,127 @@ void ListarProdutos(Produtos *p_produtos, int quantidade) {
 
 }
 
+void Adicionar_Produto(int *p_variedade_produtos, Produtos *p_produtos){
+    FILE *FileProdutos;
+    FileProdutos = fopen("produtos.txt", "a");
+    if (FileProdutos == NULL) {
+        printf("Erro ao abrir arquivo produtos\n");
+    }
+    char codigo[6];
+    char nome[50];
+    char autor[20];
+    float preco;
+    int quantidade_em_estoque;
+    int result = 0;
+    printf("Digite o codigo do livro:");
+    scanf("%s",codigo);
+    printf("Digite o nome do livro:");
+    scanf("%s",nome);
+    printf("Digite o nome do autor:");
+    scanf("%s",autor);
+    printf("Digite o preço do livro:");
+    scanf("%f",&preco);
+    printf("Digite a quantidade em estoque do livro:");
+    scanf("%d",&quantidade_em_estoque);
+    result = fprintf(FileProdutos,"%s ",codigo);
+    fprintf(FileProdutos,"%s ",nome);
+    fprintf(FileProdutos,"%s ",autor);
+    fprintf(FileProdutos,"%.2f ",preco);
+    fprintf(FileProdutos,"%d ",quantidade_em_estoque);
+    if(result == EOF){
+        printf("Erro na Gravacao\n");
+    }
+    fclose(FileProdutos);
+    *p_variedade_produtos++;
+    //printf("%d",*p_variedade_produtos);
+    Atribuir_ao_Vetor_Produtos(p_produtos);
+}
+
+void Adicionar_Clientes(int *p_qtdclientes){
+    FILE *FileClientes;
+    FileClientes = fopen("clientes.txt", "a");
+    if (FileClientes == NULL) {
+        printf("Erro ao abrir arquivo clientes\n");
+    }
+    int result;
+    char cpf[13];
+    char nome[20];
+    char telefone[13];
+    Endereco endereco;
+    Data data;
+    printf("Digite o cpf do cliente:");
+    scanf("%s",cpf);
+    printf("Digite o nome do cliente:");
+    scanf("%s",nome);
+    printf("Digite o telefone do cliente:");
+    scanf("%s",telefone);
+    printf("Digite a rua do cliente:");
+    scanf("%s",&endereco.rua);
+    printf("Digite o numero da casa do cliente:");
+    scanf("%s",&endereco.numero);
+    printf("Digite a cidade do cliente:");
+    scanf("%s",&endereco.cidade);
+    printf("Digite o estado do cliente:");
+    scanf("%s",&endereco.estado);
+    printf("Digite a data de nascimento do cliente:");
+    scanf("%s",data.dia);
+    printf("Digite o mes de nascimento do cliente:");
+    scanf("%s",data.mes);
+    printf("Digite o ano de nascimento do cliente:");
+    scanf("%s",data.ano);
+    result = fprintf(FileClientes,"%s ",cpf);
+    fprintf(FileClientes,"%s ",nome);
+    fprintf(FileClientes,"%s ",telefone);
+    fprintf(FileClientes,"%.2f ",endereco.rua);
+    fprintf(FileClientes,"%s ",endereco.numero);
+    fprintf(FileClientes,"%s ",endereco.cidade);
+    fprintf(FileClientes,"%s ",endereco.estado);
+    fprintf(FileClientes,"%s ",data.dia);
+    fprintf(FileClientes,"%s ",data.mes);
+    fprintf(FileClientes,"%s ",data.ano);
+    if(result == EOF){
+        printf("Erro na Gravacao\n");
+    }
+    fclose(FileClientes);
+    *p_qtdclientes++;
+}
+
+void Adicionar_Vendas(int *p_qtdvendas){
+    FILE *FileVendas;
+    FileVendas = fopen("vendas.txt", "a");
+    if (FileVendas == NULL) {
+        printf("Erro ao abrir arquivo vendas\n");
+    }
+    int result;
+    char cpf[13];
+    char codigo[6];
+    int quantidade_comprada;
+    printf("Digite o cpf do cliente:");
+    scanf("%s",cpf);
+    printf("Digite o codigo do produto comprado:");
+    scanf("%s",codigo);
+    printf("Digite a quantidade comprada:");
+    scanf("%d",quantidade_comprada);
+    result = fprintf(FileVendas,"%s ",cpf);
+    fprintf(FileVendas,"%s ",codigo);
+    fprintf(FileVendas,"%d ",quantidade_comprada);
+    if(result == EOF){
+        printf("Erro na Gravacao\n");
+    }
+    fclose(FileVendas);
+    *p_qtdvendas++;
+}
+
 int main(){
     int i=0;
     int qtdclientes,qtdvendas,variedade_produtos; //variaveis para saber a quantidade de cada uma das informacoes nos vetores
+    int *p_qtdclientes, *p_qtdvendas, *p_variedade_produtos;
     qtdclientes=1;
     qtdvendas=3;
-    variedade_produtos=1;
+    variedade_produtos=4;
+    p_qtdclientes = &qtdclientes;
+    p_qtdvendas = &qtdvendas;
+    p_variedade_produtos = &variedade_produtos;
 
     int escolha;
     Vendas vendas[100];
@@ -318,33 +411,6 @@ int main(){
             break;
         }
     }while(escolha != 4);
-    // Atribuir_ao_Vetor_Vendas(p_vendas);
-    // for(i=0;i<1;i++) {
-    //     printf("Cpf:%s\n", (p_vendas+i)->cpf);
-    //     printf("Codigo:%s\n", (p_vendas+i)->codigo);
-    //     printf("Quantidade Comprada:%d\n\n", (p_vendas+i)->quantidade_comprada);
-    // }
-    // Atribuir_ao_Vetor_Clientes(p_clientes);
-    // for(i=0;i<1;i++) {
-    //     printf("Cpf:%s\n", (p_clientes+i)->cpf);
-    //     printf("Nome do Cliente:%s\n", (p_clientes+i)->nome);
-    //     printf("Telefone do CLiente:%s\n", (p_clientes+i)->telefone);
-    //     printf("Rua:%s\n", (p_clientes+i)->endereco.rua);
-    //     printf("Numero:%s\n", (p_clientes+i)->endereco.numero);
-    //     printf("Cidade:%s\n", (p_clientes+i)->endereco.cidade);
-    //     printf("Estado:%s\n", (p_clientes+i)->endereco.estado);
-    //     printf("Dia:%s\n", (p_clientes+i)->data.dia);
-    //     printf("Mes:%s\n", (p_clientes+i)->data.mes);
-    //     printf("Ano:%s\n\n", (p_clientes+i)->data.ano);
-    // }
-    // Atribuir_ao_Vetor_Produtos(p_produtos);
-    // for(i=0;i<1;i++) {
-    //     printf("Codigo:%s\n",(p_produtos+i)->codigo);
-    //     printf("Nome do Livro:%s\n",(p_produtos+i)->nome);
-    //     printf("Autor do Livro:%s\n",(p_produtos+i)->autor);
-    //     printf("R$:%.2f\n",(p_produtos+i)->preco);
-    //     printf("Quantidade em Estoque:%d\n\n",(p_produtos+i)->quantidade_em_estoque);
-    // }
-
+    printf("%d",*p_variedade_produtos);
     return 0;
 }
