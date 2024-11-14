@@ -47,10 +47,8 @@ void Atribuir_ao_Vetor_Vendas(Vendas *p_vendas) {
         printf("Erro ao abrir arquivo vendas\n");
         return;
     }
-    while(fscanf(FileVendas,"%s",(p_vendas+i)->cpf) != EOF) {
-        fscanf(FileVendas,"%s",(p_vendas+i)->codigo);
-        fscanf(FileVendas,"%d",&(p_vendas+i)->quantidade_comprada);
-        i++;
+    while (fscanf(FileVendas, "%12s %5s %d", p_vendas[i].cpf, p_vendas[i].codigo, &p_vendas[i].quantidade_comprada) != EOF) {
+        i++; //Os numeros sao para definir o espaco que a string ira ocupar
     }
     fclose(FileVendas);
 }
@@ -67,19 +65,17 @@ void Atribuir_ao_Vetor_Clientes(Clientes *p_clientes) {
     char linha[200];
     while (fgets(linha, sizeof(linha), FileClientes) != NULL) {//fgets para ler uma linha do arquivo 'FileClientes' e armazená-la na variável 'linha' até o fim da linha ou tamanho máximo definido
 
-        sscanf(linha, "%s %s %s %s %s %s %s %s %s %s", //sscanf para extrair valores formatados de uma string e armazená-los em variáveis específicas
-
-            (p_clientes + i)->cpf,
-            (p_clientes + i)->nome,
-            (p_clientes + i)->telefone,
-            (p_clientes + i)->endereco.rua,
-            (p_clientes + i)->endereco.numero,
-            (p_clientes + i)->endereco.cidade,
-            (p_clientes + i)->endereco.estado,
-            (p_clientes + i)->data.dia,
-            (p_clientes + i)->data.mes,
-            (p_clientes + i)->data.ano
-        );
+        sscanf(linha, "%12s %19s %12s %39s %5s %29s %29s %2s %2s %4s", //sscanf para extrair valores formatados de uma string e armazená-los em variáveis específicas
+            p_clientes[i].cpf,
+            p_clientes[i].nome,
+            p_clientes[i].telefone,
+            p_clientes[i].endereco.rua,
+            p_clientes[i].endereco.numero,
+            p_clientes[i].endereco.cidade,
+            p_clientes[i].endereco.estado,
+            p_clientes[i].data.dia,
+            p_clientes[i].data.mes,
+            p_clientes[i].data.ano);
         i++;
     }
     fclose(FileClientes);
@@ -95,11 +91,7 @@ void Atribuir_ao_Vetor_Produtos(Produtos *p_produtos) {
         return;
     }
     // Lê os dados do arquivo até o final e armazena no vetor de produtos
-    while(fscanf(FileProdutos,"%s",(p_produtos+i)->codigo) != EOF) {
-        fscanf(FileProdutos,"%s",(p_produtos+i)->nome);
-        fscanf(FileProdutos,"%s",(p_produtos+i)->autor);
-        fscanf(FileProdutos,"%f",&(p_produtos+i)->preco);
-        fscanf(FileProdutos,"%d",&(p_produtos+i)->quantidade_em_estoque);
+    while (fscanf(FileProdutos, "%5s %49s %19s %f %d", p_produtos[i].codigo, p_produtos[i].nome, p_produtos[i].autor, &p_produtos[i].preco, &p_produtos[i].quantidade_em_estoque) != EOF) {
         i++;
     }
     fclose(FileProdutos);
@@ -171,11 +163,10 @@ void AlterarVendas(Vendas *p_vendas, int quantidade) {
     }
     
     //salvando a alteracao no arquivo
-    FILE *File;
-    File = fopen("vendas.txt", "w"); // Abre o arquivo no modo escrita, sobrescrevendo o conteúdo existente
+    FILE *File = fopen("vendas.txt", "w"); // Abre o arquivo no modo escrita, sobrescrevendo o conteúdo existente
 
     if (File == NULL) {
-        printf("Erro ao abrir arquivo vendas para escrita\n");
+        perror("Erro ao abrir arquivo vendas para escrita\n"); // usando perror para mensagens de erro automáticas.
         return;
      }
 
@@ -199,7 +190,7 @@ void AlterarClientes(Clientes *p_clientes, int quantidade) {
     char novoValor[50];
 
     printf("\nDigite o CPF do cliente que deseja alterar: ");
-    scanf("%s", cpfBusca);
+    scanf("%12s", cpfBusca);
 
     // Encontrar o cliente à ser alterado com o CPF informado
     int indice = -1;
@@ -260,11 +251,10 @@ void AlterarClientes(Clientes *p_clientes, int quantidade) {
     }
 
     // Salvando as alterações no arquivo clientes.txt
-    FILE *File;
-    File = fopen("clientes.txt", "w"); // Abre o arquivo no modo escrita, sobrescrevendo o conteúdo existente
+    FILE *File = fopen("clientes.txt", "w"); // Abre o arquivo no modo escrita, sobrescrevendo o conteúdo existente
 
     if (File == NULL) {
-        printf("Erro ao abrir arquivo clientes para escrita\n");
+        perror("Erro ao abrir arquivo clientes para escrita\n"); //perror() function is designed to print a descriptive error message to the standard error
         return;
     }
 
