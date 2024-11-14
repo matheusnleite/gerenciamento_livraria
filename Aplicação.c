@@ -282,6 +282,94 @@ void AlterarClientes(Clientes *p_clientes, int quantidade) {
     return;
 }
 
+//Funcao para alterar produtos
+// Função para alterar produtos
+void AlterarProdutos(Produtos *p_produtos, int quantidade) {
+    char codigoBusca[6];
+    int campo;
+    char novoValor[50];
+
+    printf("\nDigite o codigo do produto que deseja alterar: ");
+    scanf("%s", codigoBusca);
+
+    // Encontrar o produto a ser alterado com o código informado
+    int indice = -1;
+    for (int i = 0; i < quantidade; i++) {
+        if (strcmp((p_produtos+i)->codigo, codigoBusca) == 0) {
+            indice = i;
+            break;
+        }
+    }
+
+    if (indice == -1) {
+        printf("\nProduto não encontrado!\n");
+        return;
+    }
+
+    printf("\n=== ALTERACOES ===\n");
+    printf("1. Codigo\n");
+    printf("2. Nome\n");
+    printf("3. Autor\n");
+    printf("4. Preco\n");
+    printf("5. Quantidade em Estoque\n");
+    printf("Escolha o campo a ser alterado: ");
+    scanf("%d", &campo);
+
+    switch (campo) {
+        case 1:
+            printf("\nDigite o novo código: ");
+            scanf("%s", novoValor);
+            strcpy((p_produtos+indice)->codigo, novoValor);
+            break;
+        case 2:
+            printf("\nDigite o novo nome: ");
+            scanf("%s", novoValor);
+            strcpy((p_produtos+indice)->nome, novoValor);
+            break;
+        case 3:
+            printf("\nDigite o novo autor: ");
+            scanf("%s", novoValor);
+            strcpy((p_produtos+indice)->autor, novoValor);
+            break;
+        case 4:
+            printf("\nDigite o novo preço: ");
+            scanf("%f", &(p_produtos+indice)->preco);
+            break;
+        case 5:
+            printf("\nDigite a nova quantidade em estoque: ");
+            scanf("%d", &(p_produtos+indice)->quantidade_em_estoque);
+            break;
+        default:
+            printf("\nOpção inválida!\n");
+            return;
+    }
+
+    // Salvando a alteração no arquivo produtos.txt
+    FILE *FileProdutos;
+    FileProdutos = fopen("produtos.txt", "w");
+
+    if (FileProdutos == NULL) {
+        printf("Erro ao abrir arquivo produtos para escrita\n");
+        return;
+    }
+
+    for (int i = 0; i < quantidade; i++) {
+        fprintf(FileProdutos, "%s %s %s %.2f %d",
+                (p_produtos+i)->codigo,
+                (p_produtos+i)->nome,
+                (p_produtos+i)->autor,
+                (p_produtos+i)->preco,
+                (p_produtos+i)->quantidade_em_estoque);
+        if (i != (quantidade-1))
+            fprintf(FileProdutos, "\n");
+    }
+
+    fclose(FileProdutos);
+    printf("Produto alterado com sucesso!\n");
+    sleep(2);
+    system("cls");
+}
+
 //Funcao para listar as vendas carregadas
 void ListarVendas(Vendas *p_vendas, int *quantidade){
     int escolha;
@@ -399,9 +487,7 @@ void ListarProdutos(Produtos *p_produtos, int *variedade_produtos) {
             Adicionar_Produto(variedade_produtos, p_produtos);
             break;
         case 2:
-            printf("Ainda estamos implementando essa funcao!\n");
-            sleep(1);
-            system("cls");
+            AlterarProdutos(p_produtos, *variedade_produtos);
             break;
         case 3:
             system("cls");
