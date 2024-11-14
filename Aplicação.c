@@ -98,6 +98,22 @@ void Atribuir_ao_Vetor_Produtos(Produtos *p_produtos) {
     fclose(FileProdutos);
 }
 
+//Funcao para identificar quantas informacões tem em cada arquivo
+int Contar_Registros(char *arquivo){
+    FILE *file = fopen(arquivo,"r");
+    if(file == NULL){
+        printf("Erro ao abrir arquivo %s!\n", arquivo);
+        return 0;
+    }
+    int contador=0; //contador que vai salvar a quantidade de informações encontradas
+    char linha[200]; //variavel que vai salvar todas as informacoes de uma linha do arquivo
+    while(fgets(linha, sizeof(linha), file)!= NULL){ //fgets le uma linha, se chegar no final do arquivo ele retorna null
+        contador++;
+    }
+    fclose(file);
+    return contador;
+}
+
 //Funcao para listar as vendas carregadas
 void ListarVendas(Vendas *p_vendas, int *quantidade){
     int escolha;
@@ -268,16 +284,16 @@ void Adicionar_Produto(int *variedade_produtos, Produtos *p_produtos){
     scanf("%s",nome);
     printf("Digite o nome do autor:");
     scanf("%s",autor);
-    printf("Digite o preço do livro:");
+    printf("Digite o preco do livro:");
     scanf("%f",&preco);
     printf("Digite a quantidade em estoque do livro:");
     scanf("%d",&quantidade_em_estoque);
-    result = fprintf(FileProdutos,"%s ",codigo);
+    result = fprintf(FileProdutos, "\n");
+    fprintf(FileProdutos,"%s ",codigo);
     fprintf(FileProdutos,"%s ",nome);
     fprintf(FileProdutos,"%s ",autor);
     fprintf(FileProdutos,"%.2f ",preco);
     fprintf(FileProdutos,"%d ",quantidade_em_estoque);
-    fprintf(FileProdutos, "\n");
     if(result == EOF){
         printf("Erro na Gravacao\n");
     }
@@ -318,7 +334,8 @@ void Adicionar_Clientes(int *quantidade, int *p_clientes){
     scanf("%s",data.mes);
     printf("Digite o ano de nascimento do cliente:");
     scanf("%s",data.ano);
-    result = fprintf(FileClientes,"%s ",cpf);
+    result = fprintf(FileClientes, "\n");
+    fprintf(FileClientes,"%s ",cpf);
     fprintf(FileClientes,"%s ",nome);
     fprintf(FileClientes,"%s ",telefone);
     fprintf(FileClientes,"%s ",endereco.rua);
@@ -327,8 +344,7 @@ void Adicionar_Clientes(int *quantidade, int *p_clientes){
     fprintf(FileClientes,"%s ",endereco.estado);
     fprintf(FileClientes,"%s ",data.dia);
     fprintf(FileClientes,"%s ",data.mes);
-    fprintf(FileClientes,"%s ",data.ano);
-    fprintf(FileClientes, "\n");
+    fprintf(FileClientes,"%s ",data.ano);    
     if(result == EOF){
         printf("Erro na Gravacao\n");
     }
@@ -353,10 +369,10 @@ void Adicionar_Vendas(int *quantidade, int *p_vendas){
     scanf("%s",codigo);
     printf("Digite a quantidade comprada:");
     scanf("%d",&quantidade_comprada);
-    result = fprintf(FileVendas,"%s ",cpf);
+    result = fprintf(FileVendas, "\n");
+    fprintf(FileVendas,"%s ",cpf);
     fprintf(FileVendas,"%s ",codigo);
     fprintf(FileVendas,"%d ",quantidade_comprada);
-    fprintf(FileVendas, "\n");
     if(result == EOF){
         printf("Erro na Gravacao\n");
     }
@@ -367,9 +383,9 @@ void Adicionar_Vendas(int *quantidade, int *p_vendas){
 
 int main(){
     int qtdclientes,qtdvendas,variedade_produtos; //variaveis para saber a quantidade de cada uma das informacoes nos vetores
-    qtdclientes=1;
-    qtdvendas=3;
-    variedade_produtos=4;
+    qtdclientes= Contar_Registros("clientes.txt");
+    qtdvendas= Contar_Registros("vendas.txt");
+    variedade_produtos= Contar_Registros("produtos.txt");
 
     int escolha;
     Vendas vendas[100];
@@ -410,7 +426,9 @@ int main(){
             printf("Saindo...\n");
             break;
         default:
-            printf("Nao lembro de ter posto essa opcao nao irmao, larga de ser burro!\n");
+            printf("Opcao invalida!\n");
+            sleep(2);
+            system("cls");
             break;
         }
     }while(escolha != 4);
