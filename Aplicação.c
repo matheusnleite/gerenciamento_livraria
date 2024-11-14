@@ -148,7 +148,7 @@ void ListarVendas(Vendas *p_vendas, int quantidade){
 }
 
 // Função para listar clientes carregados 
-void ListarClientes(Clientes *p_clientes, int quantidade){
+void ListarClientes(Clientes *p_clientes, int *quantidade){
     int escolha;
     do{
         //menu dentro da funcao Clientes
@@ -176,7 +176,7 @@ void ListarClientes(Clientes *p_clientes, int quantidade){
             system("cls");
             printf("===Lista de Clientes====\n");
             //Aqui vai exibir cada cliente do vetor clientes
-            for(int i = 0; i < quantidade;i++){
+            for(int i = 0; i < *quantidade;i++){
                 printf("Cpf: %s\n", (p_clientes + i)->cpf);
                 printf("Nome do Cliente: %s\n", (p_clientes + i)->nome);
                 printf("Telefone: %s\n", (p_clientes + i)->telefone);
@@ -199,7 +199,7 @@ void ListarClientes(Clientes *p_clientes, int quantidade){
 }
 
 //// Função para listar produtos carregados
-void ListarProdutos(Produtos *p_produtos, int quantidade) {
+void ListarProdutos(Produtos *p_produtos, int *variedade_produtos) {
     int escolha;
     do{
         //menu dentro da funcao Clientes
@@ -216,7 +216,7 @@ void ListarProdutos(Produtos *p_produtos, int quantidade) {
         {
         case 1:
             system("cls");
-            Adicionar_Produto(quantidade, p_produtos);
+            Adicionar_Produto(variedade_produtos, p_produtos);
             break;
         case 2:
             printf("Ainda estamos implementando essa funcao!\n");
@@ -227,7 +227,7 @@ void ListarProdutos(Produtos *p_produtos, int quantidade) {
             system("cls");
             printf("=== Lista de Produtos ===\n");
             //Exibe cada produto do vetor de produtos
-            for (int i = 0; i < quantidade; i++) {
+            for (int i = 0; i < *variedade_produtos; i++) {
                 printf("Codigo: %s\n", (p_produtos + i)->codigo);
                 printf("Nome: %s\n", (p_produtos + i)->nome);
                 printf("Preco: %.2f\n", (p_produtos + i)->preco);
@@ -250,7 +250,7 @@ void ListarProdutos(Produtos *p_produtos, int quantidade) {
 
 }
 
-void Adicionar_Produto(int *p_variedade_produtos, Produtos *p_produtos){
+void Adicionar_Produto(int *variedade_produtos, Produtos *p_produtos){
     FILE *FileProdutos;
     FileProdutos = fopen("produtos.txt", "a");
     if (FileProdutos == NULL) {
@@ -281,8 +281,7 @@ void Adicionar_Produto(int *p_variedade_produtos, Produtos *p_produtos){
         printf("Erro na Gravacao\n");
     }
     fclose(FileProdutos);
-    *p_variedade_produtos++;
-    //printf("%d",*p_variedade_produtos);
+    (*variedade_produtos)++;
     Atribuir_ao_Vetor_Produtos(p_produtos);
 }
 
@@ -362,15 +361,10 @@ void Adicionar_Vendas(int *p_qtdvendas){
 }
 
 int main(){
-    int i=0;
     int qtdclientes,qtdvendas,variedade_produtos; //variaveis para saber a quantidade de cada uma das informacoes nos vetores
-    int *p_qtdclientes, *p_qtdvendas, *p_variedade_produtos;
     qtdclientes=1;
     qtdvendas=3;
     variedade_produtos=4;
-    p_qtdclientes = &qtdclientes;
-    p_qtdvendas = &qtdvendas;
-    p_variedade_produtos = &variedade_produtos;
 
     int escolha;
     Vendas vendas[100];
@@ -397,15 +391,15 @@ int main(){
         {
         case 1:
             system("cls");
-            ListarVendas(vendas, qtdvendas);
+            ListarVendas(vendas, &qtdvendas);
             break;
         case 2:
             system("cls");
-            ListarClientes(clientes, qtdclientes);
+            ListarClientes(clientes, &qtdclientes);
             break;
         case 3:
             system("cls");
-            ListarProdutos(produtos, variedade_produtos);
+            ListarProdutos(produtos, &variedade_produtos);
             break;
         case 4:
             printf("Saindo...\n");
@@ -415,6 +409,6 @@ int main(){
             break;
         }
     }while(escolha != 4);
-    printf("%d",*p_variedade_produtos);
+
     return 0;
 }
