@@ -62,6 +62,7 @@ void Atribuir_ao_Vetor_Clientes(Clientes *p_clientes) {
         printf("Erro ao abrir arquivo clientes\n");
         return;
     }
+    // Lê os dados do arquivo até o final e armazena no vetor de clientes
     while(fscanf(FileClientes,"%s",(p_clientes+i)->cpf) != EOF) {
         fscanf(FileClientes,"%s",(p_clientes+i)->nome);
         fscanf(FileClientes,"%s",(p_clientes+i)->telefone);
@@ -82,10 +83,11 @@ void Atribuir_ao_Vetor_Produtos(Produtos *p_produtos) {
     int i=0;
     FILE *FileProdutos;
     FileProdutos = fopen("produtos.txt", "r");
-    if (FileProdutos == NULL) {
+    if (FileProdutos == NULL) { // Verifica se o arquivo abriu corretamente
         printf("Erro ao abrir arquivo produtos\n");
         return;
     }
+    // Lê os dados do arquivo até o final e armazena no vetor de produtos
     while(fscanf(FileProdutos,"%s",(p_produtos+i)->codigo) != EOF) {
         fscanf(FileProdutos,"%s",(p_produtos+i)->nome);
         fscanf(FileProdutos,"%s",(p_produtos+i)->autor);
@@ -114,7 +116,7 @@ void ListarVendas(Vendas *p_vendas, int quantidade){
         {
         case 1:
             system("cls");
-            Adicionar_Vendas(quantidade);
+            Adicionar_Vendas(quantidade); // chama a funcao para adicionar venda
             break;
         case 2:
             printf("Ainda estamos implementando essa funcao!\n");
@@ -163,7 +165,7 @@ void ListarClientes(Clientes *p_clientes, int quantidade){
         {
         case 1:
             system("cls");
-            Adicionar_Clientes(quantidade);
+            Adicionar_Clientes(quantidade); // chama a funcao para adicionar cliente
             break;
         case 2:
             printf("Ainda estamos implementando essa funcao!\n");
@@ -173,6 +175,7 @@ void ListarClientes(Clientes *p_clientes, int quantidade){
         case 3:
             system("cls");
             printf("===Lista de Clientes====\n");
+            //Aqui vai exibir cada cliente do vetor clientes
             for(int i = 0; i < quantidade;i++){
                 printf("Cpf: %s\n", (p_clientes + i)->cpf);
                 printf("Nome do Cliente: %s\n", (p_clientes + i)->nome);
@@ -223,6 +226,7 @@ void ListarProdutos(Produtos *p_produtos, int quantidade) {
         case 3:
             system("cls");
             printf("=== Lista de Produtos ===\n");
+            //Exibe cada produto do vetor de produtos
             for (int i = 0; i < quantidade; i++) {
                 printf("Codigo: %s\n", (p_produtos + i)->codigo);
                 printf("Nome: %s\n", (p_produtos + i)->nome);
