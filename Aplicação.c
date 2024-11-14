@@ -56,24 +56,30 @@ void Atribuir_ao_Vetor_Vendas(Vendas *p_vendas) {
 }
 // Função para carregar os dados dos clientes a partir de um arquivo
 void Atribuir_ao_Vetor_Clientes(Clientes *p_clientes) {
-    int i=0;
+    int i = 0;
     FILE *FileClientes;
     FileClientes = fopen("clientes.txt", "r");
     if (FileClientes == NULL) {
         printf("Erro ao abrir arquivo clientes\n");
         return;
     }
-    // Lê os dados do arquivo até o final e armazena no vetor de clientes
-    while(fscanf(FileClientes,"%s",(p_clientes+i)->cpf) != EOF) {
-        fscanf(FileClientes,"%s",(p_clientes+i)->nome);
-        fscanf(FileClientes,"%s",(p_clientes+i)->telefone);
-        fscanf(FileClientes,"%s",(p_clientes+i)->endereco.rua);
-        fscanf(FileClientes,"%s",(p_clientes+i)->endereco.numero);
-        fscanf(FileClientes,"%s",(p_clientes+i)->endereco.cidade);
-        fscanf(FileClientes,"%s",(p_clientes+i)->endereco.estado);
-        fscanf(FileClientes,"%s",(p_clientes+i)->data.dia);
-        fscanf(FileClientes,"%s",(p_clientes+i)->data.mes);
-        fscanf(FileClientes,"%s",(p_clientes+i)->data.ano);
+    
+    char linha[200];
+    while (fgets(linha, sizeof(linha), FileClientes) != NULL) {//fgets para ler uma linha do arquivo 'FileClientes' e armazená-la na variável 'linha' até o fim da linha ou tamanho máximo definido
+
+        sscanf(linha, "%s %s %s %s %s %s %s %s %s %s", //sscanf para extrair valores formatados de uma string e armazená-los em variáveis específicas
+
+            (p_clientes + i)->cpf,
+            (p_clientes + i)->nome,
+            (p_clientes + i)->telefone,
+            (p_clientes + i)->endereco.rua,
+            (p_clientes + i)->endereco.numero,
+            (p_clientes + i)->endereco.cidade,
+            (p_clientes + i)->endereco.estado,
+            (p_clientes + i)->data.dia,
+            (p_clientes + i)->data.mes,
+            (p_clientes + i)->data.ano
+        );
         i++;
     }
     fclose(FileClientes);
@@ -115,7 +121,7 @@ int Contar_Registros(char *arquivo){
     return contador;
 }
 
-//Funcao para alterar um arquivo
+//Funcao para alterar vendas
 void AlterarVendas(Vendas *p_vendas, int quantidade) {
     char cpfBusca[13];
     int campo;
@@ -186,7 +192,95 @@ void AlterarVendas(Vendas *p_vendas, int quantidade) {
     return;    
 }
 
+//Funcao para alterar clientes
+void AlterarClientes(Clientes *p_clientes, int quantidade) {
+    char cpfBusca[13];
+    int campo;
+    char novoValor[50];
 
+    printf("\nDigite o CPF do cliente que deseja alterar: ");
+    scanf("%s", cpfBusca);
+
+    // Encontrar o cliente à ser alterado com o CPF informado
+    int indice = -1;
+    for (int i = 0; i < quantidade; i++) {
+        if (strcmp((p_clientes+i)->cpf, cpfBusca) == 0) {
+            indice = i;
+            break;
+        }
+    }
+
+    if (indice == -1) {
+        printf("\nCliente não encontrado!\n");
+        return;
+    }
+
+    printf("\n=== ALTERACOES ===\n");
+    printf("1. Nome\n");
+    printf("2. Telefone\n");
+    printf("3. Endereco\n");
+    printf("4. Data\n");
+    printf("Escolha o campo a ser alterado:");
+    scanf("%d", &campo);
+
+    switch (campo) {
+        case 1:
+            printf("\nDigite o novo nome: ");
+            scanf("%s", novoValor);
+            strcpy((p_clientes+indice)->nome, novoValor);
+            break;
+        case 2:
+            printf("\nDigite o novo telefone: ");
+            scanf("%s", novoValor);
+            strcpy((p_clientes+indice)->telefone, novoValor);
+            break;
+        case 3:
+            // Alterar endereço:
+            printf("\nDigite a nova rua: ");
+            scanf("%s", (p_clientes+indice)->endereco.rua);
+            printf("\nDigite o novo numero: ");
+            scanf("%s", (p_clientes+indice)->endereco.numero);
+            printf("\nDigite a nova cidade: ");
+            scanf("%s", (p_clientes+indice)->endereco.cidade);
+            printf("\nDigite o novo estado: ");
+            scanf("%s", (p_clientes+indice)->endereco.estado);
+            break;
+        case 4:
+        // Alterar data:
+        printf("\nDigite o novo dia: ");
+            scanf("%s", &(p_clientes+indice)->data.dia);
+            printf("\nDigite o novo mes: ");
+            scanf("%s", (p_clientes+indice)->data.mes);
+            printf("\nDigite o novo ano: ");
+            scanf("%s", (p_clientes+indice)->data.ano);
+            break;
+        default:
+            printf("\nOpção inválida!\n");
+            return;
+    }
+
+    // Salvando as alterações no arquivo clientes.txt
+    FILE *File;
+    File = fopen("clientes.txt", "w"); // Abre o arquivo no modo escrita, sobrescrevendo o conteúdo existente
+
+    if (File == NULL) {
+        printf("Erro ao abrir arquivo clientes para escrita\n");
+        return;
+    }
+
+    // Escrevendo os dados atualizados no arquivo 
+    for (int i = 0; i < quantidade; i++) {
+        fprintf(File, "%s %s %s %s %s %s %s %s %s", (p_clientes+i)->cpf, (p_clientes+i)->nome, (p_clientes+i)->telefone, (p_clientes+i)->endereco.rua, (p_clientes+i)->endereco.numero, (p_clientes+i)->endereco.cidade, (p_clientes+i)->endereco.estado, (p_clientes+i)->data.dia, (p_clientes+i)->data.ano);
+        if(i != (quantidade-1))
+            fprintf(File,"\n");
+    }
+
+    fclose(File);
+    printf("Cliente alterado com sucesso!\n");
+    sleep(2);
+    system("cls");
+    return;
+}
 
 //Funcao para listar as vendas carregadas
 void ListarVendas(Vendas *p_vendas, int *quantidade){
@@ -256,9 +350,7 @@ void ListarClientes(Clientes *p_clientes, int *quantidade){
             Adicionar_Clientes(quantidade, p_clientes); // chama a funcao para adicionar cliente
             break;
         case 2:
-            printf("Ainda estamos implementando essa funcao!\n");
-            sleep(1);
-            system("cls");
+            AlterarClientes(p_clientes, *quantidade);
             break;
         case 3:
             system("cls");
@@ -338,7 +430,7 @@ void ListarProdutos(Produtos *p_produtos, int *variedade_produtos) {
 
 }
 
-void Adicionar_Produto(int *variedade_produtos, int *p_produtos){
+void Adicionar_Produto(int *variedade_produtos, Produtos *p_produtos){
     FILE *FileProdutos;
     FileProdutos = fopen("produtos.txt", "a");
     if (FileProdutos == NULL) {
@@ -374,7 +466,7 @@ void Adicionar_Produto(int *variedade_produtos, int *p_produtos){
     Atribuir_ao_Vetor_Produtos(p_produtos);
 }
 
-void Adicionar_Clientes(int *quantidade, int *p_clientes){
+void Adicionar_Clientes(int *quantidade, Clientes *p_clientes){
     FILE *FileClientes;
     FileClientes = fopen("clientes.txt", "a");
     if (FileClientes == NULL) {
@@ -425,7 +517,7 @@ void Adicionar_Clientes(int *quantidade, int *p_clientes){
     Atribuir_ao_Vetor_Clientes(p_clientes);
 }
 
-void Adicionar_Vendas(int *quantidade, int *p_vendas){
+void Adicionar_Vendas(int *quantidade, Vendas *p_vendas){
     FILE *FileVendas;
     FileVendas = fopen("vendas.txt", "a");
     if (FileVendas == NULL) {
@@ -504,6 +596,8 @@ int main(){
             break;
         }
     }while(escolha != 4);
+
+    printf("%s", clientes[1].cpf);
 
     return 0;
 }
