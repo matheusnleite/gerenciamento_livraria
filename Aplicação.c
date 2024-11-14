@@ -66,13 +66,13 @@ void Atribuir_ao_Vetor_Clientes(Clientes *p_clientes) {
     while(fscanf(FileClientes,"%s",(p_clientes+i)->cpf) != EOF) {
         fscanf(FileClientes,"%s",(p_clientes+i)->nome);
         fscanf(FileClientes,"%s",(p_clientes+i)->telefone);
-        fscanf(FileClientes,"%s",(p_clientes)->endereco.rua);
-        fscanf(FileClientes,"%s",(p_clientes)->endereco.numero);
-        fscanf(FileClientes,"%s",(p_clientes)->endereco.cidade);
-        fscanf(FileClientes,"%s",(p_clientes)->endereco.estado);
-        fscanf(FileClientes,"%s",(p_clientes)->data.dia);
-        fscanf(FileClientes,"%s",(p_clientes)->data.mes);
-        fscanf(FileClientes,"%s",(p_clientes)->data.ano);
+        fscanf(FileClientes,"%s",(p_clientes+i)->endereco.rua);
+        fscanf(FileClientes,"%s",(p_clientes+i)->endereco.numero);
+        fscanf(FileClientes,"%s",(p_clientes+i)->endereco.cidade);
+        fscanf(FileClientes,"%s",(p_clientes+i)->endereco.estado);
+        fscanf(FileClientes,"%s",(p_clientes+i)->data.dia);
+        fscanf(FileClientes,"%s",(p_clientes+i)->data.mes);
+        fscanf(FileClientes,"%s",(p_clientes+i)->data.ano);
         i++;
     }
     fclose(FileClientes);
@@ -96,6 +96,22 @@ void Atribuir_ao_Vetor_Produtos(Produtos *p_produtos) {
         i++;
     }
     fclose(FileProdutos);
+}
+
+//Funcao para identificar quantas informacões tem em cada arquivo
+int Contar_Registros(char *arquivo){
+    FILE *file = fopen(arquivo,"r");
+    if(file == NULL){
+        printf("Erro ao abrir arquivo %s!\n", arquivo);
+        return 0;
+    }
+    int contador=0; //contador que vai salvar a quantidade de informações encontradas
+    char linha[200]; //variavel que vai salvar todas as informacoes de uma linha do arquivo
+    while(fgets(linha, sizeof(linha), file)!= NULL){ //fgets le uma linha, se chegar no final do arquivo ele retorna null
+        contador++;
+    }
+    fclose(file);
+    return contador;
 }
 
 //Funcao para listar as vendas carregadas
@@ -268,11 +284,12 @@ void Adicionar_Produto(int *variedade_produtos, Produtos *p_produtos){
     scanf("%s",nome);
     printf("Digite o nome do autor:");
     scanf("%s",autor);
-    printf("Digite o preço do livro:");
+    printf("Digite o preco do livro:");
     scanf("%f",&preco);
     printf("Digite a quantidade em estoque do livro:");
     scanf("%d",&quantidade_em_estoque);
-    result = fprintf(FileProdutos,"%s ",codigo);
+    result = fprintf(FileProdutos, "\n");
+    fprintf(FileProdutos,"%s ",codigo);
     fprintf(FileProdutos,"%s ",nome);
     fprintf(FileProdutos,"%s ",autor);
     fprintf(FileProdutos,"%.2f ",preco);
@@ -298,26 +315,27 @@ void Adicionar_Clientes(int *quantidade, int *p_clientes){
     Endereco endereco;
     Data data;
     printf("Digite o cpf do cliente:");
-    scanf("%s ",cpf);
+    scanf("%s",cpf);
     printf("Digite o nome do cliente:");
-    scanf("%s ",nome);
+    scanf("%s",nome);
     printf("Digite o telefone do cliente:");
-    scanf("%s ",telefone);
+    scanf("%s",telefone);
     printf("Digite a rua do cliente:");
-    scanf("%s ",&endereco.rua);
+    scanf("%s",&endereco.rua);
     printf("Digite o numero da casa do cliente:");
-    scanf("%s ",&endereco.numero);
+    scanf("%s",&endereco.numero);
     printf("Digite a cidade do cliente:");
-    scanf("%s ",&endereco.cidade);
+    scanf("%s",&endereco.cidade);
     printf("Digite o estado do cliente:");
-    scanf("%s ",&endereco.estado);
+    scanf("%s",&endereco.estado);
     printf("Digite a data de nascimento do cliente:");
-    scanf("%s ",data.dia);
+    scanf("%s",data.dia);
     printf("Digite o mes de nascimento do cliente:");
-    scanf("%s ",data.mes);
+    scanf("%s",data.mes);
     printf("Digite o ano de nascimento do cliente:");
-    scanf("%s ",data.ano);
-    result = fprintf(FileClientes,"%s ",cpf);
+    scanf("%s",data.ano);
+    result = fprintf(FileClientes, "\n");
+    fprintf(FileClientes,"%s ",cpf);
     fprintf(FileClientes,"%s ",nome);
     fprintf(FileClientes,"%s ",telefone);
     fprintf(FileClientes,"%s ",endereco.rua);
@@ -326,7 +344,7 @@ void Adicionar_Clientes(int *quantidade, int *p_clientes){
     fprintf(FileClientes,"%s ",endereco.estado);
     fprintf(FileClientes,"%s ",data.dia);
     fprintf(FileClientes,"%s ",data.mes);
-    fprintf(FileClientes,"%s ",data.ano);
+    fprintf(FileClientes,"%s ",data.ano);    
     if(result == EOF){
         printf("Erro na Gravacao\n");
     }
@@ -346,12 +364,13 @@ void Adicionar_Vendas(int *quantidade, int *p_vendas){
     char codigo[6];
     int quantidade_comprada;
     printf("Digite o cpf do cliente:");
-    scanf("%s ",cpf);
+    scanf("%s",cpf);
     printf("Digite o codigo do produto comprado:");
-    scanf("%s ",codigo);
+    scanf("%s",codigo);
     printf("Digite a quantidade comprada:");
     scanf("%d",&quantidade_comprada);
-    result = fprintf(FileVendas,"%s ",cpf);
+    result = fprintf(FileVendas, "\n");
+    fprintf(FileVendas,"%s ",cpf);
     fprintf(FileVendas,"%s ",codigo);
     fprintf(FileVendas,"%d ",quantidade_comprada);
     if(result == EOF){
@@ -364,9 +383,9 @@ void Adicionar_Vendas(int *quantidade, int *p_vendas){
 
 int main(){
     int qtdclientes,qtdvendas,variedade_produtos; //variaveis para saber a quantidade de cada uma das informacoes nos vetores
-    qtdclientes=1;
-    qtdvendas=3;
-    variedade_produtos=4;
+    qtdclientes= Contar_Registros("clientes.txt");
+    qtdvendas= Contar_Registros("vendas.txt");
+    variedade_produtos= Contar_Registros("produtos.txt");
 
     int escolha;
     Vendas vendas[100];
@@ -407,7 +426,9 @@ int main(){
             printf("Saindo...\n");
             break;
         default:
-            printf("Nao lembro de ter posto essa opcao nao irmao, larga de ser burro!\n");
+            printf("Opcao invalida!\n");
+            sleep(2);
+            system("cls");
             break;
         }
     }while(escolha != 4);
