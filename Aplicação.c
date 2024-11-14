@@ -99,7 +99,7 @@ void Atribuir_ao_Vetor_Produtos(Produtos *p_produtos) {
 }
 
 //Funcao para listar as vendas carregadas
-void ListarVendas(Vendas *p_vendas, int quantidade){
+void ListarVendas(Vendas *p_vendas, int *quantidade){
     int escolha;
     do{
         //menu dentro da funcao vendas
@@ -116,7 +116,7 @@ void ListarVendas(Vendas *p_vendas, int quantidade){
         {
         case 1:
             system("cls");
-            Adicionar_Vendas(quantidade); // chama a funcao para adicionar venda
+            Adicionar_Vendas(quantidade, p_vendas); // chama a funcao para adicionar venda
             break;
         case 2:
             printf("Ainda estamos implementando essa funcao!\n");
@@ -126,7 +126,7 @@ void ListarVendas(Vendas *p_vendas, int quantidade){
         case 3:
             system("cls");
             printf("===Lista de vendas====\n");
-            for(int i = 0; i <quantidade;i++){
+            for(int i = 0; i < *quantidade;i++){
                 printf("Cpf: %s\n", (p_vendas+i)->cpf);
                 printf("Codigo: %s\n", (p_vendas+i)->codigo);
                 printf("Quantidade comprada: %d\n\n", (p_vendas+i)->quantidade_comprada);
@@ -165,7 +165,7 @@ void ListarClientes(Clientes *p_clientes, int *quantidade){
         {
         case 1:
             system("cls");
-            Adicionar_Clientes(quantidade); // chama a funcao para adicionar cliente
+            Adicionar_Clientes(quantidade, p_clientes); // chama a funcao para adicionar cliente
             break;
         case 2:
             printf("Ainda estamos implementando essa funcao!\n");
@@ -285,7 +285,7 @@ void Adicionar_Produto(int *variedade_produtos, Produtos *p_produtos){
     Atribuir_ao_Vetor_Produtos(p_produtos);
 }
 
-void Adicionar_Clientes(int *p_qtdclientes){
+void Adicionar_Clientes(int *quantidade, int *p_clientes){
     FILE *FileClientes;
     FileClientes = fopen("clientes.txt", "a");
     if (FileClientes == NULL) {
@@ -320,7 +320,7 @@ void Adicionar_Clientes(int *p_qtdclientes){
     result = fprintf(FileClientes,"%s ",cpf);
     fprintf(FileClientes,"%s ",nome);
     fprintf(FileClientes,"%s ",telefone);
-    fprintf(FileClientes,"%.2f ",endereco.rua);
+    fprintf(FileClientes,"%s ",endereco.rua);
     fprintf(FileClientes,"%s ",endereco.numero);
     fprintf(FileClientes,"%s ",endereco.cidade);
     fprintf(FileClientes,"%s ",endereco.estado);
@@ -331,10 +331,11 @@ void Adicionar_Clientes(int *p_qtdclientes){
         printf("Erro na Gravacao\n");
     }
     fclose(FileClientes);
-    *p_qtdclientes++;
+    (*quantidade)++;
+    Atribuir_ao_Vetor_Clientes(p_clientes);
 }
 
-void Adicionar_Vendas(int *p_qtdvendas){
+void Adicionar_Vendas(int *quantidade, int *p_vendas){
     FILE *FileVendas;
     FileVendas = fopen("vendas.txt", "a");
     if (FileVendas == NULL) {
@@ -349,7 +350,7 @@ void Adicionar_Vendas(int *p_qtdvendas){
     printf("Digite o codigo do produto comprado:");
     scanf("%s",codigo);
     printf("Digite a quantidade comprada:");
-    scanf("%d",quantidade_comprada);
+    scanf("%d",&quantidade_comprada);
     result = fprintf(FileVendas,"%s ",cpf);
     fprintf(FileVendas,"%s ",codigo);
     fprintf(FileVendas,"%d ",quantidade_comprada);
@@ -357,7 +358,8 @@ void Adicionar_Vendas(int *p_qtdvendas){
         printf("Erro na Gravacao\n");
     }
     fclose(FileVendas);
-    *p_qtdvendas++;
+    (*quantidade)++;
+    Atribuir_ao_Vetor_Vendas(p_vendas);
 }
 
 int main(){
