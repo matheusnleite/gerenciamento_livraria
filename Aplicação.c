@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 typedef struct{
     char codigo[6];
@@ -114,6 +115,79 @@ int Contar_Registros(char *arquivo){
     return contador;
 }
 
+//Funcao para alterar um arquivo
+void AlterarVendas(Vendas *p_vendas, int quantidade) {
+    char cpfBusca[13];
+    int campo;
+    char novoValor[50];
+
+    printf("\nDigite o CPF da venda que deseja alterar: ");
+    scanf("%s", cpfBusca);
+
+    // Encontrar a venda à ser alterada com o CPF informado
+    int indice = -1;
+    for (int i = 0; i < quantidade; i++) {
+        if (strcmp((p_vendas+i)->cpf, cpfBusca) == 0) {
+            indice = i;
+            break;
+        }
+    }
+
+    if (indice == -1) {
+        printf("\nVenda nao encontrada!\n");
+        return;
+    }
+    printf("\n=== ALTERACOES ===\n");
+    printf("1. CPF\n");
+    printf("2. Codigo do produto\n");
+    printf("3. Quantidade comprada\n");
+    printf("Escolha o campo a ser alterado:");
+    scanf("%d", &campo);
+
+    switch (campo) {
+        case 1:
+            printf("\nDigite o novo CPF: ");
+            scanf("%s", novoValor);
+            strcpy((p_vendas+indice)->cpf, novoValor);
+            break;
+        case 2:
+            printf("\nDigite o novo codigo do produto: ");
+            scanf("%s", novoValor);
+            strcpy((p_vendas+indice)->codigo, novoValor);
+            break;
+        case 3:
+            printf("\nDigite a nova quantidade comprada: ");
+            scanf("%d", &(p_vendas+indice)->quantidade_comprada);
+            break;
+        default:
+            printf("\nOpção invalida!\n");
+            return;
+    }
+    
+    //salvando a alteracao no arquivo
+    FILE *File;
+    File = fopen("vendas.txt", "w"); // Abre o arquivo no modo escrita, sobrescrevendo o conteúdo existente
+
+    if (File == NULL) {
+        printf("Erro ao abrir arquivo vendas para escrita\n");
+        return;
+     }
+
+    for (int i = 0; i < quantidade; i++) {
+        fprintf(File, "%s %s %d", (p_vendas+i)->cpf, (p_vendas+i)->codigo, (p_vendas+i)->quantidade_comprada);
+        if(i != (quantidade-1))
+            fprintf(File,"\n");
+    }
+
+    fclose(File);
+    printf("Venda alterada com sucesso!\n");
+    sleep(2);
+    system("cls");
+    return;    
+}
+
+
+
 //Funcao para listar as vendas carregadas
 void ListarVendas(Vendas *p_vendas, int *quantidade){
     int escolha;
@@ -135,9 +209,7 @@ void ListarVendas(Vendas *p_vendas, int *quantidade){
             Adicionar_Vendas(quantidade, p_vendas); // chama a funcao para adicionar venda
             break;
         case 2:
-            printf("Ainda estamos implementando essa funcao!\n");
-            sleep(1);
-            system("cls");
+            AlterarVendas(p_vendas, *quantidade);
             break;
         case 3:
             system("cls");
@@ -266,7 +338,7 @@ void ListarProdutos(Produtos *p_produtos, int *variedade_produtos) {
 
 }
 
-void Adicionar_Produto(int *variedade_produtos, Produtos *p_produtos){
+void Adicionar_Produto(int *variedade_produtos, int *p_produtos){
     FILE *FileProdutos;
     FileProdutos = fopen("produtos.txt", "a");
     if (FileProdutos == NULL) {
