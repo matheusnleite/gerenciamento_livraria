@@ -361,7 +361,7 @@ void AlterarProdutos(Produtos *p_produtos, int quantidade) {
 }
 
 //Funcao para listar as vendas carregadas
-void ListarVendas(Vendas *p_vendas, int *quantidade){
+void ListarVendas(Vendas *p_vendas, int *quantidade, Clientes *p_clientes, Produtos *p_produtos){
     int escolha;
     do{
         //menu dentro da funcao vendas
@@ -378,7 +378,7 @@ void ListarVendas(Vendas *p_vendas, int *quantidade){
         {
         case 1:
             system("cls");
-            Adicionar_Vendas(quantidade, p_vendas); // chama a funcao para adicionar venda
+            Adicionar_Vendas(quantidade, p_vendas, p_clientes, p_produtos); // chama a funcao para adicionar vendas
             break;
         case 2:
             AlterarVendas(p_vendas, *quantidade);
@@ -408,7 +408,7 @@ void ListarVendas(Vendas *p_vendas, int *quantidade){
 }
 
 // Função para listar clientes carregados 
-void ListarClientes(Clientes *p_clientes, int *quantidade){
+void ListarClientes(Clientes *p_clientes, int *quantidade, Vendas *p_vendas){
     int escolha;
     do{
         //menu dentro da funcao Clientes
@@ -442,9 +442,8 @@ void ListarClientes(Clientes *p_clientes, int *quantidade){
             }
             break;
         case 4:
-            printf("Ainda estamos implementando essa funcao!\n");
-            sleep(1);
             system("cls");
+            RemoverClientes("clientes.txt",p_clientes,p_vendas);
             break;
         case 5:
             printf("Saindo...\n");
@@ -457,7 +456,7 @@ void ListarClientes(Clientes *p_clientes, int *quantidade){
 }
 
 //// Função para listar produtos carregados
-void ListarProdutos(Produtos *p_produtos, int *variedade_produtos) {
+void ListarProdutos(Produtos *p_produtos, int *variedade_produtos, Vendas *p_vendas) {
     int escolha;
     do{
         //menu dentro da funcao Clientes
@@ -491,9 +490,8 @@ void ListarProdutos(Produtos *p_produtos, int *variedade_produtos) {
             }
             break;
         case 4:
-            printf("Ainda estamos implementando essa funcao!\n");
-            sleep(1);
             system("cls");
+            Remover("produtos.txt",p_produtos,p_vendas);
             break;
         case 5:
             printf("Saindo...\n");
@@ -593,22 +591,51 @@ void Adicionar_Clientes(int *quantidade, Clientes *p_clientes){
     Atribuir_ao_Vetor_Clientes(p_clientes);
 }
 
-void Adicionar_Vendas(int *quantidade, Vendas *p_vendas){
+void Adicionar_Vendas(int *quantidade, Vendas *p_vendas, Clientes *p_clientes, Produtos *p_produtos){
     FILE *FileVendas;
     FileVendas = fopen("vendas.txt", "a");
     if (FileVendas == NULL) {
         printf("Erro ao abrir arquivo vendas\n");
     }
-    int result;
+    int result,i,aux=0;
     char cpf[13];
     char codigo[6];
     int quantidade_comprada;
     printf("Digite o cpf do cliente:");
     scanf("%s",cpf);
+    for(i=0; i<100; i++){   //verifica o cpf digitado se esta no vetor de clientes
+            if (cpf == p_clientes[i].cpf)
+        {
+            aux = 1;
+        }
+    }
+    if(aux==0){
+        printf("\nCPF nao cadastrado");
+        return;
+    }
     printf("Digite o codigo do produto comprado:");
     scanf("%s",codigo);
+
+    int indice = -1;
+    for (int i = 0; i < quantidade; i++) { //verifica se o codigo digitado esta no vetor de produtos
+        if (strcmp((p_produtos+i)->codigo, codigo) == 0) {
+            indice = i;
+            break;
+        }
+    }
+    if (indice == -1) {
+        printf("\nProduto não encontrado!\n");
+        return;
+    }
+
     printf("Digite a quantidade comprada:");
     scanf("%d",&quantidade_comprada);
+
+    if(quantidade_comprada > (p_produtos + indice)->quantidade_em_estoque){ //verifica se a quanidade comprada é maior que a quantidade em estoque
+        printf("\nQuantidade maior que o estoque");
+        return;
+    }
+    (p_produtos  + indice)->quantidade_em_estoque = (p_produtos  + indice)->quantidade_em_estoque - quantidade_comprada;
     result = fprintf(FileVendas, "\n");
     fprintf(FileVendas,"%s ",cpf);
     fprintf(FileVendas,"%s ",codigo);
@@ -619,6 +646,162 @@ void Adicionar_Vendas(int *quantidade, Vendas *p_vendas){
     fclose(FileVendas);
     (*quantidade)++;
     Atribuir_ao_Vetor_Vendas(p_vendas);
+}
+
+void RemoverClientes(char *arquivo, Clientes *p_clientes, Vendas *p_vendas) {
+    int aux=0,num_linha,i;
+    char cpf[13];
+    printf("Digite o cpf do cliente:");
+    scanf("%s",cpf);
+    for(i=0; i<100; i++){   //verifica o cpf digitado se esta no vetor de clientes
+            if (strcmp(cpf, p_clientes[i].cpf) == 0)
+        {
+            aux = 1;
+            num_linha = i;
+        }
+    }
+    if(aux==0){
+        printf("\nCPF nao cadastrado");
+        return;
+    }
+    FILE *arquivo_original = fopen(arquivo, "r");
+    if (arquivo_original == NULL) {
+        perror("Erro ao abrir o arquivo");
+        return;
+    }
+
+    FILE *arquivo_temp = fopen("temp.txt", "w");
+    if (arquivo_temp == NULL) {
+        perror("Erro ao criar arquivo temporário");
+        fclose(arquivo_original);
+        return;
+    }
+
+    char linha[1024];
+    int contador = 1;
+
+    // Lê cada linha do arquivo original
+    while (fgets(linha, sizeof(linha), arquivo_original) != NULL) {
+        // Escreve no arquivo temporário apenas as linhas que não correspondem à linha a ser apagada
+        if (contador != num_linha) {
+            fputs(linha, arquivo_temp);
+        }
+        contador++;
+    }
+
+    fclose(arquivo_original);
+    fclose(arquivo_temp);
+
+    // Substitui o arquivo original pelo temporário
+    remove(arquivo);
+    rename("temp.txt", arquivo);
+
+    printf("Cliente removido com sucesso.\n");
+}
+
+void RemoverProdutos(char *arquivo, Produtos *p_produtos, Vendas *p_vendas) {
+    int aux=0,num_linha,i;
+    char codigo[6];
+    printf("Digite o codigo do produto:");
+    scanf("%s",codigo);
+    for(i=0; i<100; i++){   //verifica se o codigo digitado esta no vetor de clientes
+            if (strcmp(codigo, p_produtos[i].codigo) == 0)
+        {
+            aux = 1;
+            num_linha = i;
+        }
+    }
+    if(aux==0){
+        printf("\nCodigo nao cadastrado");
+        return;
+    }
+    FILE *arquivo_original = fopen(arquivo, "r");
+    if (arquivo_original == NULL) {
+        perror("Erro ao abrir o arquivo");
+        return;
+    }
+
+    FILE *arquivo_temp = fopen("temp.txt", "w");
+    if (arquivo_temp == NULL) {
+        perror("Erro ao criar arquivo temporário");
+        fclose(arquivo_original);
+        return;
+    }
+
+    char linha[1024];
+    int contador = 1;
+
+    // Lê cada linha do arquivo original
+    while (fgets(linha, sizeof(linha), arquivo_original) != NULL) {
+        // Escreve no arquivo temporário apenas as linhas que não correspondem à linha a ser apagada
+        if (contador != num_linha) {
+            fputs(linha, arquivo_temp);
+        }
+        contador++;
+    }
+
+    fclose(arquivo_original);
+    fclose(arquivo_temp);
+
+    // Substitui o arquivo original pelo temporário
+    remove(arquivo);
+    rename("temp.txt", arquivo);
+
+    printf("Produto removido com sucesso.\n");
+}
+
+void RemoverVendas(char *arquivo, Vendas *p_vendas) {
+    int aux=0,num_linha,i;
+    char cpf[13];
+    char codigo[6];
+    printf("Digite o cpf do cliente:");
+    scanf("%s",cpf);
+    printf("Digite o codigo:");
+    scanf("%s",codigo);
+    for(i=0; i<100; i++){   //verifica o cpf digitado se esta no vetor de clientes
+            if (strcmp(cpf, p_vendas[i].cpf) == 0 && strcmp(codigo, p_vendas[i].codigo) == 0)
+        {
+            aux = 1;
+            num_linha = i;
+        }
+    }
+    if(aux==0){
+        printf("\nCPF ou/e Codigo nao associados a venda");
+        return;
+    }
+    FILE *arquivo_original = fopen(arquivo, "r");
+    if (arquivo_original == NULL) {
+        perror("Erro ao abrir o arquivo");
+        return;
+    }
+
+    FILE *arquivo_temp = fopen("temp.txt", "w");
+    if (arquivo_temp == NULL) {
+        perror("Erro ao criar arquivo temporário");
+        fclose(arquivo_original);
+        return;
+    }
+
+    char linha[1024];
+    int contador = 1;
+
+    // Lê cada linha do arquivo original
+    while (fgets(linha, sizeof(linha), arquivo_original) != NULL) {
+        // Escreve no arquivo temporário apenas as linhas que não correspondem à linha a ser apagada
+        if (contador != num_linha) {
+            fputs(linha, arquivo_temp);
+        }
+        contador++;
+    }
+
+    fclose(arquivo_original);
+    fclose(arquivo_temp);
+
+    // Substitui o arquivo original pelo temporário
+    remove(arquivo);
+    rename("temp.txt", arquivo);
+
+    printf("Venda removida com sucesso.\n");
 }
 
 int main(){
@@ -652,15 +835,15 @@ int main(){
         {
         case 1:
             system("cls");
-            ListarVendas(vendas, &qtdvendas);
+            ListarVendas(vendas, &qtdvendas, &clientes, &produtos);
             break;
         case 2:
             system("cls");
-            ListarClientes(clientes, &qtdclientes);
+            ListarClientes(clientes, &qtdclientes, vendas);
             break;
         case 3:
             system("cls");
-            ListarProdutos(produtos, &variedade_produtos);
+            ListarProdutos(produtos, &variedade_produtos, vendas);
             break;
         case 4:
             printf("Saindo...\n");
