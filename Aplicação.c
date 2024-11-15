@@ -1,3 +1,6 @@
+//Luccas Asaphe Pena Salomão
+//Matheus Nascimento Leite
+//Victor Hugo Monteiro
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -47,7 +50,7 @@ void Atribuir_ao_Vetor_Vendas(Vendas *p_vendas) {
         printf("Erro ao abrir arquivo vendas\n");
         return;
     }
-    while (fscanf(FileVendas, "%12s %5s %d", p_vendas[i].cpf, p_vendas[i].codigo, &p_vendas[i].quantidade_comprada) != EOF) {
+    while (fscanf(FileVendas, "%s %s %d", p_vendas[i].cpf, p_vendas[i].codigo, &p_vendas[i].quantidade_comprada) != EOF) {
         i++; //Os numeros sao para definir o espaco que a string ira ocupar
     }
     fclose(FileVendas);
@@ -65,7 +68,7 @@ void Atribuir_ao_Vetor_Clientes(Clientes *p_clientes) {
     char linha[200];
     while (fgets(linha, sizeof(linha), FileClientes) != NULL) {//fgets para ler uma linha do arquivo 'FileClientes' e armazená-la na variável 'linha' até o fim da linha ou tamanho máximo definido
 
-        sscanf(linha, "%12s %19s %12s %39s %5s %29s %29s %2s %2s %4s", //sscanf para extrair valores formatados de uma string e armazená-los em variáveis específicas
+        sscanf(linha, "%s %s %s %s %s %s %s %s %s %s", //sscanf para extrair valores formatados de uma string e armazená-los em variáveis específicas
             p_clientes[i].cpf,
             p_clientes[i].nome,
             p_clientes[i].telefone,
@@ -91,7 +94,15 @@ void Atribuir_ao_Vetor_Produtos(Produtos *p_produtos) {
         return;
     }
     // Lê os dados do arquivo até o final e armazena no vetor de produtos
-    while (fscanf(FileProdutos, "%5s %49s %19s %f %d", p_produtos[i].codigo, p_produtos[i].nome, p_produtos[i].autor, &p_produtos[i].preco, &p_produtos[i].quantidade_em_estoque) != EOF) {
+    char linha[200];
+    while (fgets(linha, sizeof(linha), FileProdutos) != NULL) {//fgets para ler uma linha do arquivo 'FileClientes' e armazená-la na variável 'linha' até o fim da linha ou tamanho máximo definido
+
+        sscanf(linha, "%s %s %s %f %d ", //sscanf para extrair valores formatados de uma string e armazená-los em variáveis específicas
+            p_produtos[i].codigo,
+            p_produtos[i].nome,
+            p_produtos[i].autor,
+            &p_produtos[i].preco,
+            &p_produtos[i].quantidade_em_estoque);
         i++;
     }
     fclose(FileProdutos);
@@ -361,7 +372,7 @@ void AlterarProdutos(Produtos *p_produtos, int quantidade) {
 }
 
 //Funcao para listar as vendas carregadas
-void ListarVendas(Vendas *p_vendas, int *quantidade, Clientes *p_clientes, Produtos *p_produtos){
+void ListarVendas(int *quantidade, Vendas *p_vendas, Clientes *p_clientes, Produtos *p_produtos,int *variedade){
     int escolha;
     do{
         //menu dentro da funcao vendas
@@ -378,10 +389,10 @@ void ListarVendas(Vendas *p_vendas, int *quantidade, Clientes *p_clientes, Produ
         {
         case 1:
             system("cls");
-            Adicionar_Vendas(quantidade, p_vendas, p_clientes, p_produtos); // chama a funcao para adicionar vendas
+            Adicionar_Vendas(quantidade, p_vendas, p_clientes, p_produtos, variedade); // chama a funcao para adicionar vendas
             break;
         case 2:
-            AlterarVendas(p_vendas, *quantidade);
+            AlterarVendas(p_vendas, quantidade);
             break;
         case 3:
             system("cls");
@@ -393,9 +404,9 @@ void ListarVendas(Vendas *p_vendas, int *quantidade, Clientes *p_clientes, Produ
             }
             break;
         case 4:
-            printf("Ainda estamos implementando essa funcao!\n");
-            sleep(1);
             system("cls");
+            RemoverVendas("vendas.txt",p_vendas,quantidade);
+            
             break;
         case 5:
             printf("Saindo...\n");
@@ -443,7 +454,7 @@ void ListarClientes(Clientes *p_clientes, int *quantidade, Vendas *p_vendas){
             break;
         case 4:
             system("cls");
-            //RemoverClientes("clientes.txt",p_clientes,p_vendas);
+            RemoverClientes("clientes.txt",p_clientes,p_vendas,quantidade);
             break;
         case 5:
             printf("Saindo...\n");
@@ -491,7 +502,7 @@ void ListarProdutos(Produtos *p_produtos, int *variedade_produtos, Vendas *p_ven
             break;
         case 4:
             system("cls");
-            RemoverProdutos("produtos.txt",p_produtos,p_vendas);
+            RemoverProdutos("produtos.txt",p_produtos,p_vendas,variedade_produtos);
             break;
         case 5:
             printf("Saindo...\n");
@@ -611,13 +622,13 @@ void Adicionar_Clientes(int *quantidade, Clientes *p_clientes){
     Atribuir_ao_Vetor_Clientes(p_clientes);
 }
 
-void Adicionar_Vendas(int *quantidade, Vendas *p_vendas, Clientes *p_clientes, Produtos *p_produtos){
+void Adicionar_Vendas(int *quantidade, Vendas *p_vendas, Clientes *p_clientes, Produtos *p_produtos, int *variedade){
     FILE *FileVendas;
     FileVendas = fopen("vendas.txt", "a");
     if (FileVendas == NULL) {
         printf("Erro ao abrir arquivo vendas\n");
     }
-    int result,i,aux=0;
+    int result,i,j,aux=0;
     char cpf[13];
     char codigo[6];
     int quantidade_comprada;
@@ -635,16 +646,14 @@ void Adicionar_Vendas(int *quantidade, Vendas *p_vendas, Clientes *p_clientes, P
     }
     printf("Digite o codigo do produto comprado:");
     scanf("%s",codigo);
-
-    int indice = -1;
-    for (int i = 0; i < *quantidade; i++) { //verifica se o codigo digitado esta no vetor de produtos
-        if (strcmp((p_produtos+i)->codigo, codigo) == 0) {
-            indice = i;
-            break;
+    int indice = 0;
+    for (int j = 0; j < *variedade; j++) { //verifica se o codigo digitado esta no vetor de produtos
+        if (strcmp(codigo, p_produtos[j].codigo) == 0) {
+            indice = 1;
         }
     }
-    if (indice == -1) {
-        printf("\nProduto não encontrado!\n");
+    if (indice == 0) {
+        printf("\nProduto nao encontrado!\n");
         return;
     }
 
@@ -668,7 +677,7 @@ void Adicionar_Vendas(int *quantidade, Vendas *p_vendas, Clientes *p_clientes, P
     Atribuir_ao_Vetor_Vendas(p_vendas);
 }
 
-void RemoverClientes(char *arquivo, Clientes *p_clientes, Vendas *p_vendas) {
+void RemoverClientes(char *arquivo, Clientes *p_clientes, Vendas *p_vendas,int *quantidade) {
     int aux=0,num_linha,i,j;
     char cpf[13];
     printf("Digite o cpf do cliente:");
@@ -677,7 +686,7 @@ void RemoverClientes(char *arquivo, Clientes *p_clientes, Vendas *p_vendas) {
             if (strcmp(cpf, p_clientes[i].cpf) == 0)
         {
             aux = 1;
-            num_linha = i;
+            num_linha = i + 1;
         }
     }
     if(aux==0){
@@ -722,11 +731,12 @@ void RemoverClientes(char *arquivo, Clientes *p_clientes, Vendas *p_vendas) {
     // Substitui o arquivo original pelo temporário
     remove(arquivo);
     rename("temp.txt", arquivo);
-
+    Atribuir_ao_Vetor_Clientes(p_clientes);
+    (*quantidade)--;
     printf("Cliente removido com sucesso.\n");
 }
 
-void RemoverProdutos(char *arquivo, Produtos *p_produtos, Vendas *p_vendas) {
+void RemoverProdutos(char *arquivo, Produtos *p_produtos, Vendas *p_vendas, int *quantidade) {
     int aux=0,num_linha,i,j;
     char codigo[6];
     printf("Digite o codigo do produto:");
@@ -735,7 +745,7 @@ void RemoverProdutos(char *arquivo, Produtos *p_produtos, Vendas *p_vendas) {
             if (strcmp(codigo, p_produtos[i].codigo) == 0)
         {
             aux = 1;
-            num_linha = i;
+            num_linha = i + 1;
         }
     }
     if(aux==0){
@@ -780,11 +790,12 @@ void RemoverProdutos(char *arquivo, Produtos *p_produtos, Vendas *p_vendas) {
     // Substitui o arquivo original pelo temporário
     remove(arquivo);
     rename("temp.txt", arquivo);
-
+    Atribuir_ao_Vetor_Produtos(p_produtos);
+    (*quantidade)--;
     printf("Produto removido com sucesso.\n");
 }
 
-void RemoverVendas(char *arquivo, Vendas *p_vendas) {
+void RemoverVendas(char *arquivo, Vendas *p_vendas,int *quantidade) {
     int aux=0,num_linha,i;
     char cpf[13];
     char codigo[6];
@@ -796,7 +807,7 @@ void RemoverVendas(char *arquivo, Vendas *p_vendas) {
             if (strcmp(cpf, p_vendas[i].cpf) == 0 && strcmp(codigo, p_vendas[i].codigo) == 0)
         {
             aux = 1;
-            num_linha = i;
+            num_linha = i + 1;
         }
     }
     if(aux==0){
@@ -835,7 +846,8 @@ void RemoverVendas(char *arquivo, Vendas *p_vendas) {
     // Substitui o arquivo original pelo temporário
     remove(arquivo);
     rename("temp.txt", arquivo);
-
+    Atribuir_ao_Vetor_Vendas(p_vendas);
+    (*quantidade)--;
     printf("Venda removida com sucesso.\n");
 }
 
@@ -859,9 +871,9 @@ int main(){
     do{
         //Fiz um pequeno menu principal, ADICIONAR AS POSTERIORES FUNCOES PARA ADICIONAR COISAS
         printf("\n=== Menu Principal ===\n");
-        printf("1. Listar Vendas\n");
-        printf("2. Listar Clientes\n");
-        printf("3. Listar Produtos\n");
+        printf("1. Vendas\n");
+        printf("2. Clientes\n");
+        printf("3. Produtos\n");
         printf("4. Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &escolha);
@@ -870,7 +882,7 @@ int main(){
         {
         case 1:
             system("cls");
-            ListarVendas(vendas, &qtdvendas, clientes, produtos);
+            ListarVendas(&qtdvendas, vendas, clientes, produtos, &variedade_produtos);
             break;
         case 2:
             system("cls");
