@@ -1,0 +1,45 @@
+Participantes: Victor Hugo Monteiro, Matheus Nascimento Leite, Luccas Asaphe Pena
+
+
+1. Inicialização do Sistema
+O sistema é inicializado lendo os dados dos arquivos clientes.txt, produtos.txt e vendas.txt.
+Esses arquivos devem existir na pasta do programa e devem estar formatados de forma consistente com as estruturas Clientes, Produtos e Vendas.
+
+2. Menu Principal
+Ao iniciar, o sistema exibe o menu principal com as opções:
+1. Vendas: Exibe o menu de gerenciamento de vendas.
+2. Clientes: Exibe o menu de gerenciamento de clientes.
+3. Produtos: Exibe o menu de gerenciamento de produtos.
+4. Sair: Finaliza o programa.
+
+3. Funcionalidades de Cada Menu
+Vendas
+Adicionar Vendas: Insere uma nova venda no sistema.
+É necessário informar o CPF do cliente, o código do produto e a quantidade comprada.
+O sistema verifica se o CPF e o produto estão cadastrados e se há estoque disponível.
+Listar Vendas: Exibe todas as vendas registradas.
+Remover Vendas: Remove uma venda específica do sistema.
+Requer o CPF do cliente e o código do produto para localizar a venda.
+Clientes
+Adicionar Cliente: Adiciona um novo cliente ao sistema.
+O sistema solicita informações como CPF, nome, telefone e endereço.
+O CPF é verificado para garantir que não esteja duplicado.
+Listar Clientes: Exibe a lista de todos os clientes cadastrados.
+Remover Cliente: Exclui um cliente específico do sistema.
+É necessário fornecer o CPF do cliente. Clientes associados a vendas não podem ser removidos.
+Produtos
+Adicionar Produto: Insere um novo produto no sistema.
+São requisitados o código, descrição, preço e quantidade em estoque do produto.
+O código é verificado para evitar duplicidade.
+Listar Produtos: Mostra todos os produtos disponíveis.
+Remover Produto: Exclui um produto específico.
+O código do produto é solicitado, e o sistema verifica se ele está associado a alguma venda antes de permitir a remoção.
+
+4. Manipulação de Arquivos
+As funções Adicionar, Remover e Listar gravam e leem dados nos arquivos correspondentes. Caso um cliente, produto ou venda seja removido, o sistema cria um arquivo temporário para regravação, garantindo a consistência dos dados.
+
+5. Atualizações dos Vetores de Dados
+Após cada operação de adição ou remoção, as funções Atribuir_ao_Vetor_Clientes, Atribuir_ao_Vetor_Produtos e Atribuir_ao_Vetor_Vendas são chamadas para atualizar os vetores do programa com os dados mais recentes dos arquivos.
+
+
+
